@@ -30,6 +30,7 @@ import {
   PenTool,
   Pentagon,
   MessageSquareTextIcon,
+  DockIcon,
 } from "lucide-react";
 // IMPORT DỮ LIỆU VÀ HÀM TỪ FILE MỚI
 import {
@@ -44,8 +45,8 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 
 const IncomingDocumentPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [documentData, setDocumentData] = useState(initialDocumentData);
   const [isLoading, setIsLoading] = useState(false);
+  const [documentData, setDocumentData] = useState(initialDocumentData);
 
   // STATE CHO PHÂN TRANG
   const [pageSize, setPageSize] = useState(10);
@@ -275,8 +276,12 @@ const IncomingDocumentPage = () => {
     <div className="relative space-y-6">
       {/* LOADING OVERLAY */}
       {isLoading && <LoadingOverlay />}
-      <DocumentHeader title={"4. Sổ văn bản đến"} />
-      <div className="  flex items-center justify-between gap-2 px-6 h-full">
+      <DocumentHeader
+        MenuIcon={DockIcon}
+        menuLabel={"Văn bản"}
+        subMenuTitle={"4. Sổ văn bản đến"}
+      />
+      <div className="flex items-center justify-between gap-2 px-6 h-full">
         <DocumentSearch
           initialValue={searchTerm}
           onSearchChange={setSearchTerm}
@@ -296,17 +301,16 @@ const IncomingDocumentPage = () => {
           TitleButton="Lọc dữ liệu theo điều kiện"
         />
         <DocumentButton
-          className="w-62 "
+          className="w-62"
           Icon={Plus}
           TitleName={"Thêm mới văn bản"}
-          width="w-full"
           TitleButton={"Thêm mới văn bản"}
         />
       </div>
 
-      <div className="flex flex-col md:px-6 space-y-4 dark:bg-slate-900 w-full min-h-screen ">
-        {/* TABS VÀ BẢNG DỮ LIỆU */}
+      <div className="flex flex-col md:px-6 space-y-4 dark:bg-slate-900 w-full min-h-screen">
         <div className="flex flex-col  dark:bg-slate-800 pb-4">
+          {/* TABS VÀ BẢNG DỮ LIỆU */}
           <div className="flex justify-end items-center  space-x-3">
             <span className="text-slate-500 dark:text-slate-400 text-sm">
               Tải về:

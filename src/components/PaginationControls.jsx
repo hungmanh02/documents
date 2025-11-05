@@ -33,7 +33,7 @@ const PaginationControls = ({
   const isLastPage = currentPage === totalPages || totalPages === 0;
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center px-3 py-2 md:px-4 md:py-3 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+    <div className="flex flex-col sm:flex-row justify-between items-center px-3 py-2 md:px-4 md:py-3 bg-white dark:bg-slate-800 rounded-sm shadow-sm border border-slate-200 dark:border-slate-700">
       {/* 1. KHU VỰC TRÁI: Select Page Size và Thông tin mục */}
       <div className="flex items-center text-xs sm:text-sm text-slate-700 dark:text-slate-300 w-full sm:w-auto justify-start order-2 sm:order-1 mt-2 sm:mt-0">
         {/* Select Page Size (Nằm sát thông tin) */}
@@ -51,8 +51,8 @@ const PaginationControls = ({
 
         {/* Hiển thị thông tin */}
         <span>
-          Đang hiển thị từ **{totalItems > 0 ? startIndex + 1 : 0}** đến **
-          {Math.min(endIndex, totalItems)}** của **{totalItems}** phần tử
+          Đang hiển thị từ {totalItems > 0 ? startIndex + 1 : 0} đến{" "}
+          {Math.min(endIndex, totalItems)} của {totalItems} phần tử
         </span>
       </div>
 

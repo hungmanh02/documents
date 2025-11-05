@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   PlusIcon,
   SearchIcon,
@@ -11,8 +11,18 @@ import {
   XCircle,
   Eye,
   Paperclip,
+  DockIcon,
+  RefreshCcw,
+  Filter,
+  Plus,
+  Upload,
+  Settings,
 } from "lucide-react";
 import DocumentFormReceive from "./DocumentFormReceive";
+import DocumentHeader from "../../components/Documents/DocumentHeader";
+import DocumentSearch from "../../components/Documents/DocumentSearch";
+import DocumentButton from "../../components/Documents/DocumentButton";
+import PaginationControls from "../../components/PaginationControls";
 // Dữ liệu giả định (Giữ nguyên)
 const initialDocumentData = [
   {
@@ -179,246 +189,196 @@ const TableRow = ({ data }) => {
 const DocumentReceivePage = () => {
   // Thêm state để quản lý trạng thái mở/đóng Form
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [documentData, setDocumentData] = useState(initialDocumentData);
+
   // State và Logic Phân trang (Giữ nguyên)
   const [pageSize, setPageSize] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalItems = initialDocumentData.length;
+  const totalItems = documentData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   const isDataEmpty = totalItems === 0;
 
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentData = initialDocumentData.slice(startIndex, endIndex);
+  const currentData = documentData.slice(startIndex, endIndex);
 
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
+  const handlePageSizeChange = (size) => {
+    setPageSize(size);
+    setCurrentPage(1);
+  };
   const handleOpenForm = () => {
     setIsFormOpen(!isFormOpen);
+  };
+  // --- LOGIC TẢI DỮ LIỆU (Mô phỏng Refresh) ---
+  const fetchData = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setDocumentData(initialDocumentData);
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  const handleRefresh = () => {
+    if (!isLoading) {
+      fetchData();
+    }
   };
 
   return (
     // CONTAINER CHÍNH: Layout Responsive. KHÔNG CÓ overflow-y-auto ở đây.
-    <div className="flex flex-col p-4 md:p-6 space-y-4 dark:bg-slate-900 w-full">
-      {/* 1. Breadcrumb (Responsive) */}
-      <div className="flex items-center justify-between shrink-0 text-sm text-slate-500 bg-white border border-slate-200/50 rounded-xl shadow-md px-3 py-2 md:px-4 md:py-2 dark:bg-slate-800 dark:border-slate-700">
-        <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1">
-            <Menu className="w-4 h-4 text-slate-400" />
-            <span className="hidden sm:inline">Documents</span>
-          </span>
-          <span className="text-slate-400 hidden sm:inline">{">"}</span>
-          <span className="text-slate-700 font-medium dark:text-white">
-            2. Tiếp nhận văn bản
-          </span>
-        </div>
-        {/* flex-none: Đảm bảo nhóm này không bị co lại */}
-        <div className="flex items-center space-x-2 sm:space-x-3 flex-none">
-          {/* Tùy chọn (Xuất File & Cài đặt) */}
-          <div className="flex items-center text-sm text-slate-600 dark:text-slate-300 space-x-1 md:space-x-2 mr-2 md:mr-4">
-            <span className="font-medium hidden sm:inline">Tùy chọn:</span>
+    <div className="space-y-6">
+      <DocumentHeader
+        MenuIcon={DockIcon}
+        menuLabel={"Văn bản"}
+        subMenuTitle={"2. Tiếp nhận văn bản"}
+      />
+      <div className=" flex items-center justify-between gap-2 px-6 h-full">
+        <DocumentSearch
+          initialValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          className="w-full h-full"
+        />
+        <DocumentButton
+          width="py-3"
+          Icon={RefreshCcw}
+          onClick={handleRefresh}
+          disabled={isLoading}
+          TitleButton="Tải lại dữ liệu"
+          classNameIcon={` ${isLoading ? "animate-spin" : ""}`}
+        />
+        <DocumentButton
+          width="py-3"
+          Icon={Filter}
+          TitleButton="Lọc dữ liệu theo điều kiện"
+        />
+        <DocumentButton
+          className="w-62"
+          Icon={Plus}
+          TitleName={"Thêm mới văn bản"}
+          TitleButton={"Thêm mới văn bản"}
+          onClick={handleOpenForm}
+        />
+      </div>
+      <div className="flex flex-col md:px-6 space-y-4 dark:bg-slate-900 w-full min-h-screen ">
+        <div className="flex flex-col  dark:bg-slate-800 pb-4">
+          <div className="flex justify-end items-center  space-x-3">
+            <span className="text-slate-500 dark:text-slate-400 text-sm">
+              Tải về:
+            </span>
             <button
-              className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-200 p-1"
-              title="Xuất File"
+              className="text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-200 p-1"
+              title="Xuất file"
             >
-              <UploadIcon className="w-5 h-5" />
+              <Upload className="w-5 h-5" />
             </button>
             <button
-              className="text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 p-1"
-              title="Tùy chỉnh cột"
+              className="text-slate-500 hover:text-slate-700 p-1"
+              title="Cài đặt"
             >
-              <Settings2 className="w-5 h-5" />
+              <Settings className="w-5 h-5" />
             </button>
           </div>
-
-          {/* Nút Thêm mới (Ẩn nhãn trên mobile) */}
-          <button
-            className="flex items-center px-3 py-1.5 md:px-4 md:py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 text-sm"
-            title="Thêm mới"
-            onClick={handleOpenForm}
-          >
-            <PlusIcon className="w-4 h-4 mr-1 md:w-5 md:h-5 md:mr-2" />
-            <span className="hidden sm:inline">Thêm mới</span>
-            <span className="sm:hidden">Thêm</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. KHU VỰC BẢNG (Single Table) */}
-      {/* KEY RESPONSIVE: overflow-x-auto trên container để cuộn ngang bảng trên mobile */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-x-auto">
-        <table className="min-w-full table-auto divide-y divide-slate-200 dark:divide-slate-700">
-          <thead className="bg-slate-50 dark:bg-slate-900/50 sticky top-0">
-            <tr>
-              {/* Tiêu đề bảng: Sử dụng min-w để đảm bảo Responsive và tránh co quá mức */}
-              <th
-                className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_stt}`}
-              >
-                STT
-              </th>
-              <th
-                className={`px-1 py-3 text-center ${columnWidths.minW_paperclip}`}
-              >
-                <Paperclip size={16} className="mx-auto" />
-              </th>
-              <th
-                className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_ngayDen}`}
-              >
-                Ngày đến <ChevronDown className="w-3 h-3 ml-1 inline-block" />
-              </th>
-              <th
-                className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_thongTin}`}
-              >
-                Thông tin văn bản
-              </th>
-              <th
-                className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_loaiVanBan}`}
-              >
-                Loại văn bản
-              </th>
-              <th
-                className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_loaiNghiepVu}`}
-              >
-                Loại nghiệp vụ
-              </th>
-              <th
-                className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_lyDo}`}
-              >
-                Lý do
-              </th>
-              <th
-                className={`px-4 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_lichSu}`}
-              >
-                Lịch sử
-              </th>
-              <th
-                className={`px-4 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_thaoTac}`}
-              >
-                Thao tác
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-            {isDataEmpty ? (
-              <tr>
-                <td
-                  colSpan="9"
-                  className="px-6 py-10 text-center text-lg text-slate-500 dark:text-slate-400"
-                >
-                  **Không có dữ liệu**
-                </td>
-              </tr>
-            ) : (
-              currentData.map((data, index) => (
-                <TableRow
-                  key={data.id}
-                  data={{ ...data, stt: startIndex + index + 1 }}
-                />
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* 3. Phân Trang (Responsive & Logic) */}
-      <div className="flex flex-col sm:flex-row justify-between items-center shrink-0 px-3 py-2 md:px-4 md:py-3 bg-white dark:bg-slate-800 rounded-xl shadow-md border border-slate-200/50 dark:border-slate-700/50">
-        {/* Thông tin số lượng hàng và Tùy chọn Page Size */}
-        <div className="flex items-center text-xs sm:text-sm text-slate-700 dark:text-slate-300 w-full sm:w-auto justify-center sm:justify-start order-2 sm:order-1 mt-2 sm:mt-0">
-          {/* Select Page Size */}
-          <select
-            className="p-1 rounded-lg border dark:border-slate-700 dark:bg-slate-700 mr-2 focus:ring-blue-500 focus:border-blue-500 text-xs sm:text-sm"
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setCurrentPage(1); // Reset về trang 1 khi đổi kích thước trang
-            }}
-          >
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-          </select>
-
-          {/* Hiển thị thông tin */}
-          <span>
-            Đang hiển thị từ **{startIndex + 1}** đến **
-            {Math.min(endIndex, totalItems)}** của **{totalItems}**
-          </span>
-        </div>
-
-        {/* Các nút điều hướng và Số trang hiện tại */}
-        <div className="flex items-center space-x-2 order-1 sm:order-2 w-full sm:w-auto justify-center">
-          <span className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-            Trang **{currentPage}** / **{totalPages}**
-          </span>
-
-          {/* Nhóm nút điều hướng */}
-          <div className="flex border rounded-lg overflow-hidden dark:border-slate-700">
-            {/* Nút Về đầu << */}
-            <button
-              className={`p-2 border-r dark:border-slate-700 transition 
-                    ${
-                      currentPage === 1
-                        ? "text-slate-400 cursor-not-allowed"
-                        : "text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
-                    }`}
-              onClick={() => handlePageChange(1)}
-              disabled={currentPage === 1}
-              title="Trang đầu"
-            >
-              &lt;&lt;
-            </button>
-
-            {/* Nút Trang trước < */}
-            <button
-              className={`p-2 border-r dark:border-slate-700 transition 
-                    ${
-                      currentPage === 1
-                        ? "text-slate-400 cursor-not-allowed"
-                        : "text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
-                    }`}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              title="Trang trước"
-            >
-              &lt;
-            </button>
-
-            {/* Nút Trang kế tiếp > */}
-            <button
-              className={`p-2 border-r dark:border-slate-700 transition 
-                    ${
-                      currentPage === totalPages || totalPages === 0
-                        ? "text-slate-400 cursor-not-allowed"
-                        : "text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
-                    }`}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages || totalPages === 0}
-              title="Trang sau"
-            >
-              &gt;
-            </button>
-
-            {/* Nút Về cuối >> */}
-            <button
-              className={`p-2 transition 
-                    ${
-                      currentPage === totalPages || totalPages === 0
-                        ? "text-slate-400 cursor-not-allowed"
-                        : "text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
-                    }`}
-              onClick={() => handlePageChange(totalPages)}
-              disabled={currentPage === totalPages || totalPages === 0}
-              title="Trang cuối"
-            >
-              &gt;&gt;
-            </button>
+          <div className="mt-4 rounded-md shadow p-2.5 shadow-slate-400">
+            <div className="overflow-x-auto bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-sm shadow-md">
+              <table className="min-w-full table-auto divide-y divide-slate-200 dark:divide-slate-700">
+                <thead className="bg-slate-50 dark:bg-slate-900/50 sticky top-0">
+                  <tr>
+                    {/* Tiêu đề bảng: Sử dụng min-w để đảm bảo Responsive và tránh co quá mức */}
+                    <th
+                      className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_stt}`}
+                    >
+                      STT
+                    </th>
+                    <th
+                      className={`px-1 py-3 text-center ${columnWidths.minW_paperclip}`}
+                    >
+                      <Paperclip size={16} className="mx-auto" />
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_ngayDen}`}
+                    >
+                      Ngày đến{" "}
+                      <ChevronDown className="w-3 h-3 ml-1 inline-block" />
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_thongTin}`}
+                    >
+                      Thông tin văn bản
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_loaiVanBan}`}
+                    >
+                      Loại văn bản
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_loaiNghiepVu}`}
+                    >
+                      Loại nghiệp vụ
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_lyDo}`}
+                    >
+                      Lý do
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_lichSu}`}
+                    >
+                      Lịch sử
+                    </th>
+                    <th
+                      className={`px-4 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider ${columnWidths.minW_thaoTac}`}
+                    >
+                      Thao tác
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                  {isDataEmpty ? (
+                    <tr>
+                      <td
+                        colSpan="9"
+                        className="px-6 py-10 text-center text-lg text-slate-500 dark:text-slate-400"
+                      >
+                        **Không có dữ liệu**
+                      </td>
+                    </tr>
+                  ) : (
+                    currentData.map((data, index) => (
+                      <TableRow
+                        key={data.id}
+                        data={{ ...data, stt: startIndex + index + 1 }}
+                      />
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <PaginationControls
+              totalItems={totalItems}
+              pageSize={pageSize}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              startIndex={startIndex}
+              endIndex={endIndex}
+            />
           </div>
         </div>
+
+        {/* 4. COMPONENT FORM NHẬP LIỆU (Được render có điều kiện) */}
+        <DocumentFormReceive isOpen={isFormOpen} onClose={handleOpenForm} />
       </div>
-      {/* 4. COMPONENT FORM NHẬP LIỆU (Được render có điều kiện) */}
-      <DocumentFormReceive isOpen={isFormOpen} onClose={handleOpenForm} />
     </div>
   );
 };

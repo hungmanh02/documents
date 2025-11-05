@@ -8,6 +8,7 @@ import DocumentForm from "./pages/Documents/DocumentForm";
 import DocumentReceivePage from "./pages/Documents/DocumentReceivePage";
 import OutgoingDocumentPage from "./pages/Documents/OutgoingDocumentPage";
 import IncomingDocumentPage from "./pages/Documents/IncomingDocumentPage";
+import ConfigurationPage from "./pages/Documents/ConfigurationPage";
 
 function App() {
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
@@ -40,24 +41,29 @@ function App() {
             <div className="p-6 space-y-6">
               {currentPage === "inventory" && <Inventory />}
             </div> */}
-            {currentPage === "banhanhvanban" && (
+            {currentPage === "ban_hanh_van_ban" && (
               <div className=" space-y-6 ">
                 <DocumentForm />
               </div>
             )}
-            {currentPage === "tiepnhanvanban" && (
-              <div className="p-6 space-y-6">
+            {currentPage === "tiep_nhan_van_ban" && (
+              <div className="space-y-6">
                 <DocumentReceivePage />
               </div>
             )}
-            {currentPage === "sovanbandi" && (
+            {currentPage === "so_van_ban_di" && (
               <div className="space-y-6">
                 <OutgoingDocumentPage />
               </div>
             )}
-            {currentPage === "sovanbanden" && (
+            {currentPage === "so_van_ban_den" && (
               <div className="space-y-6">
                 <IncomingDocumentPage />
+              </div>
+            )}
+            {currentPage === "cau_hinh_so_vb" && (
+              <div className="space-y-6">
+                <ConfigurationPage />
               </div>
             )}
           </main>

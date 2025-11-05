@@ -3,12 +3,17 @@ import {
   BarChart3,
   Calendar,
   ChevronDown,
+  ClipboardList,
   CreditCard,
   DockIcon,
   FileText,
+  HelpCircle,
   LayoutDashboard,
+  List,
   MessagesSquare,
   Package,
+  RotateCw,
+  Search,
   Settings,
   ShoppingBag,
   Users,
@@ -17,88 +22,78 @@ import {
 const menuItems = [
   {
     id: "dashboard",
-    icon: LayoutDashboard,
+    icon: LayoutDashboard, // Hoặc RotateCw nếu muốn icon giống ảnh hơn
     label: "Dashboard",
-    // active: true,
-    badge: "New",
   },
-  {
-    id: "analytics",
-    icon: BarChart3,
-    label: "Analytics",
-    submenu: [
-      { id: "overview", label: "Overview" },
-      { id: "reports", label: "Reports" },
-      { id: "insights", label: "Insights" },
-    ],
-  },
-  {
-    id: "users",
-    icon: Users,
-    label: "Users",
-    count: "2.4k",
-    submenu: [
-      { id: "all-users", label: "All Users" },
-      { id: "roles", label: "Roles & Permissions" },
-      { id: "activity", label: "User Activity" },
-    ],
-  },
-  {
-    id: "ecommerce",
-    icon: ShoppingBag,
-    label: "E-commerce",
-    submenu: [
-      { id: "products", label: "Products" },
-      { id: "orders", label: "Orders" },
-      { id: "customers", label: "Customers" },
-    ],
-  },
-  {
-    id: "inventory",
-    icon: Package,
-    label: "Inventory",
-    count: "847",
-  },
+  // 1. Nhóm Quản lý Văn bản
   {
     id: "documents",
-    icon: DockIcon,
-    label: "Documents",
+    icon: FileText,
+    label: "Văn bản",
+    count: "4",
     submenu: [
-      { id: "banhanhvanban", label: "Ban hành văn bản" },
-      { id: "tiepnhanvanban", label: "Tiếp nhận văn bản", count: "100" },
-      { id: "sovanbandi", label: "Sổ văn bản đi" },
-      { id: "sovanbanden", label: "Sổ văn bản đến" },
+      { id: "ban_hanh_van_ban", label: "1. Ban hành văn bản" },
+      { id: "tiep_nhan_van_ban", label: "2. Tiếp nhận văn bản" },
+      { id: "so_van_ban_di", label: "3. Sổ văn bản đi" },
+      { id: "so_van_ban_den", label: "4. Sổ văn bản đến" },
     ],
   },
+  // 2. Tìm kiếm - Tra cứu dữ liệu
   {
-    id: "transaction",
-    icon: CreditCard,
-    label: "Transaction",
+    id: "tra_cuu",
+    icon: Search,
+    label: "Tìm kiếm - Tra cứu dữ liệu",
+    submenu: [
+      { id: "tra_cuu_di", label: "Văn bản đi" },
+      { id: "tra_cuu_den", label: "Văn bản đến" },
+    ],
   },
+  // 3. Báo cáo
   {
-    id: "messages",
-    icon: MessagesSquare,
-    label: "Messages",
-    badge: "12",
+    id: "bao_cao",
+    icon: List, // Hoặc BarChart3
+    label: "Báo cáo",
+    submenu: [
+      { id: "bao_cao_di", label: "Văn bản đi" },
+      { id: "bao_cao_den", label: "Văn bản đến" },
+    ],
   },
+  // 4. Thống kê (Icon RotateCw hoặc Folder)
   {
-    id: "calendar",
-    icon: Calendar,
-    label: "Calendar",
+    id: "thong_ke",
+    icon: RotateCw,
+    label: "Thống kê",
+    submenu: [
+      { id: "thong_ke_vb_den", label: "1. Văn bản đến" },
+      { id: "thong_ke_vb_di", label: "2. Văn bản đi" },
+      { id: "lien_thong_vb", label: "3. Liên thông văn bản" },
+      { id: "top_gui_nhan", label: "4. Top gửi/nhận hệ thống" },
+      { id: "gui_nhan_thang", label: "5. Gửi/nhận theo tháng" },
+    ],
   },
+  // 5. Quản trị đơn vị (Settings2 hoặc ClipboardList)
   {
-    id: "reports",
-    icon: FileText,
-    label: "Reports",
+    id: "quan_tri_don_vi",
+    icon: ClipboardList,
+    label: "Quản trị đơn vị",
+    submenu: [
+      { id: "cau_hinh_so_vb", label: "Cấu hình sổ văn bản" },
+      // Thêm các mục khác nếu cần thiết
+    ],
   },
+  // 6. Hướng dẫn sử dụng
   {
-    id: "settings",
-    icon: Settings,
-    label: "Settings",
+    id: "huong_dan",
+    icon: HelpCircle,
+    label: "Hướng dẫn sử dụng",
   },
 ];
 const Sidebar = ({ collapsed, onToggle, currentPage, onPageChange }) => {
-  const [expandedItems, setExpendedItems] = useState(new Set(["analytics"]));
+  // Logic mở rộng menu con (khởi tạo mở cho Documents)
+  const [expandedItems, setExpandedItems] = useState(
+    new Set(["documents", "tra_cuu"])
+  ); // Mở thêm tra_cuu để dễ kiểm tra
+
   const toggleExpanded = (itemid) => {
     const newExpanded = new Set(expandedItems);
     if (newExpanded.has(itemid)) {
@@ -106,8 +101,10 @@ const Sidebar = ({ collapsed, onToggle, currentPage, onPageChange }) => {
     } else {
       newExpanded.add(itemid);
     }
-    setExpendedItems(newExpanded);
+    setExpandedItems(newExpanded);
   };
+
+  const isItemActive = (itemId) => currentPage === itemId;
   return (
     <div
       className={`${
@@ -138,11 +135,13 @@ const Sidebar = ({ collapsed, onToggle, currentPage, onPageChange }) => {
         {menuItems.map((item) => (
           <div key={item.id} className="">
             <button
-              className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
-                currentPage === item.id || item.active
-                  ? "bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25"
-                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50"
-              }`}
+              className={`w-full flex items-center justify-between p-2 rounded-xl transition-all duration-200 
+                ${
+                  isItemActive(item.id) ||
+                  item.submenu?.some((sub) => isItemActive(sub.id))
+                    ? "bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                }`}
               onClick={() => {
                 if (item?.submenu) {
                   toggleExpanded(item?.id);
@@ -151,19 +150,19 @@ const Sidebar = ({ collapsed, onToggle, currentPage, onPageChange }) => {
                 }
               }}
             >
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <item.icon className={`w-5 h-5`} />
                 {/* Conditional Rendering */}
                 {!collapsed && (
                   <>
-                    <span className="font-medium ml-2">{item.label}</span>
+                    <span className="font-medium ">{item.label}</span>
                     {item.badge && (
-                      <span className="px-2 py-1 text-xs bg-red-500 text-white rounded-full">
+                      <span className=" flex w-6 h-6  text-sm font-bold text-center items-center justify-center bg-red-500 text-white rounded-full">
                         {item.badge}
                       </span>
                     )}
                     {item.count && (
-                      <span className="px-2 py-1 text-xs bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full">
+                      <span className="flex w-6 h-6  text-sm font-bold text-center items-center justify-center  bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full">
                         {item.count}
                       </span>
                     )}
@@ -171,7 +170,11 @@ const Sidebar = ({ collapsed, onToggle, currentPage, onPageChange }) => {
                 )}
               </div>
               {!collapsed && item.submenu && (
-                <ChevronDown className={`w-5 h-5 transition-transform `} />
+                <ChevronDown
+                  className={`w-5 h-5 transition-transform ${
+                    expandedItems.has(item.id) ? "rotate-180" : ""
+                  }`}
+                />
               )}
             </button>
             {/* Sub Menus */}
@@ -180,11 +183,12 @@ const Sidebar = ({ collapsed, onToggle, currentPage, onPageChange }) => {
                 {item?.submenu.map((subitem) => (
                   <button
                     key={subitem.id}
-                    className={`w-full text-left pl-4 py-2 pr-2 text-sm rounded-xl transition-all duration-200 flex gap-3 items-center  ${
-                      currentPage === subitem.id
-                        ? "bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25" // Active styles cho submenu
-                        : "text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:shadow-lg hover:shadow-slate-500/25 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-r-lg"
-                    }`}
+                    className={`w-full text-left pl-4 py-2 pr-2 text-sm rounded-xl transition-all duration-200 flex gap-3 items-center  
+                      ${
+                        isItemActive(subitem.id)
+                          ? "bg-linear-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25" // Active styles cho submenu
+                          : "text-slate-600 dark:text-slate-400 hover:text-slate-800 hover:shadow-lg hover:shadow-slate-500/25 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-r-lg"
+                      }`}
                     onClick={() => {
                       onPageChange(subitem.id);
                     }}

@@ -4,6 +4,7 @@ import {
   ChevronRight,
   ChevronUp,
   Database,
+  DockIcon,
   FileText,
   Menu,
   Search,
@@ -42,7 +43,11 @@ export default function DocumentForm() {
 
   return (
     <>
-      <DocumentHeader title={"1. Ban hành văn bản"} />
+      <DocumentHeader
+        MenuIcon={DockIcon}
+        menuLabel={"Văn bản"}
+        subMenuTitle={"1. Ban hành văn bản"}
+      />
       <div className="px-6 bg-white space-y-5  transition-all overflow-y-auto h-full">
         {/* Header */}
 

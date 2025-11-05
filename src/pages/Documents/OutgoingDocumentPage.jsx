@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from "react";
 import {
-  Search,
   Plus,
   RefreshCcw,
   Settings,
   Upload,
-  Eye,
-  Edit,
-  Trash2,
   ChevronDown,
   Paperclip,
-  Menu,
-  CheckCircle,
-  File,
-  RefreshCcwIcon,
   CornerUpLeft,
   ListTodo,
   LayoutGrid,
   Filter,
+  DockIcon,
 } from "lucide-react";
 import {
   initialDocumentData,
@@ -373,7 +366,11 @@ const OutgoingDocumentPage = () => {
   return (
     <div className="relative space-y-6">
       {isLoading && <LoadingOverlay />}
-      <DocumentHeader title={"3. Sổ văn bản đi"} />
+      <DocumentHeader
+        MenuIcon={DockIcon}
+        menuLabel={"Văn bản"}
+        subMenuTitle={"3. Sổ văn bản đi"}
+      />
       {/* {render tool search button */}
       <div className="flex items-center justify-between gap-2 px-6 h-full">
         <DocumentSearch

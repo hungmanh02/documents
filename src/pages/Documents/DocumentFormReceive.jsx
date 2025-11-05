@@ -19,33 +19,9 @@ import {
   ChevronRight,
   Database,
   StickyNote,
+  Dock,
+  DockIcon,
 } from "lucide-react";
-
-// Dữ liệu giả định cho các trường select
-// const selectOptions = {
-//   loai: ["Công văn", "Quyết định", "Thông báo", "Hợp đồng"],
-//   loaiVanBan: ["Công văn đến", "Thư", "Fax"],
-//   donViPhatHanh: ["Trường ĐH A", "Sở Y Tế B", "Bộ Công Thương C"],
-// };
-
-// Khởi tạo trạng thái form (giả định)
-// const initialFormData = {
-//   loai: "",
-//   ngayDen: new Date().toISOString().slice(0, 10),
-//   soDen: "",
-//   soVanBan: "",
-//   tuDong: false,
-//   nguoiTiepNhan: "Trung Tâm CNTT - Phòng CNTT",
-//   donViPhatHanh: "",
-//   loaiVanBan: "",
-//   lanhDaoChiDao: "",
-//   chuThich: "",
-//   phuongThucNhan: "email", // Hoặc 'co-quan'
-//   hanHoiDap: "",
-//   coHanHoiDap: false,
-//   // Dữ liệu cho bảng Văn bản có liên quan
-//   relatedDocuments: [],
-// };
 
 const DocumentFormReceive = ({ isOpen, onClose }) => {
   const inputRef = useRef(null);
@@ -76,40 +52,6 @@ const DocumentFormReceive = ({ isOpen, onClose }) => {
   // Class cho input khi bị disabled
   const disabledStyle =
     "bg-slate-50 dark:bg-slate-700/50 dark:text-slate-400 cursor-not-allowed";
-  // const [formData, setFormData] = useState(initialFormData);
-  // const [attachmentCount, setAttachmentCount] = useState(0);
-
-  // const handleChange = (e) => {
-  //   const { name, value, type, checked } = e.target;
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
-
-  // const handleFileChange = (e) => {
-  //   const files = e.target.files;
-  //   setAttachmentCount(files ? files.length : 0);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     attachments: files, // Lưu FileList
-  //   }));
-  // };
-
-  // const handleRemoveFiles = () => {
-  //   document.getElementById("attachment-input-form").value = null;
-  //   setAttachmentCount(0);
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     attachments: null,
-  //   }));
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Dữ liệu Form Gửi đi:", formData);
-  //   onClose();
-  // };
 
   if (!isOpen) return null;
 
@@ -122,7 +64,7 @@ const DocumentFormReceive = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between gap-2 text-md text-slate-500 bg-slate-50 border-slate-200 p-4 rounded-t-xl shadow-sm border-b dark:border-slate-700">
           <div className="flex items-center gap-1">
             <span className="flex items-center gap-1">
-              <Menu className="w-4 h-4 text-slate-400" />
+              <DockIcon className="w-4 h-4 text-slate-400" />
               Documents
             </span>
             <span className="text-slate-400">{">"}</span>
